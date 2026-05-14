@@ -1,6 +1,9 @@
 # PANDEA React
 
-PANDEA es una plataforma de gestión de ventas orientada a microempresas, desarrollada con React y Vite.
+PANDEA es una plataforma de gestión de ventas con integración de WhatsApp.
+
+
+
 
 El proyecto busca optimizar la administración de clientes, pedidos y ventas mediante integración con WhatsApp, automatización e inteligencia artificial.
 
@@ -10,4 +13,6 @@ El proyecto busca optimizar la administración de clientes, pedidos y ventas med
 - Vite
 - JavaScript
 - CSS3
-- Firebase
+- - Firebase
+- Mysql
+- 
