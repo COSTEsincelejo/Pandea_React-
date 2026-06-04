@@ -1,31 +1,24 @@
 /**
- * @fileoverview Servicio de Administrador
- * Verifica si el usuario actual tiene permisos de administrador.
- * Los admins se guardan en la colección "admins" de Firestore.
- *
- * Estructura en Firestore:
- * admins/
- *   {uid}/
- *     email: "admin@pandea.com"
+ * @fileoverview Servicio de Administrador — Supabase
+ * Verifica si el usuario es admin consultando la tabla admins en Supabase.
  */
 
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { supabase } from "../config/supabase";
 
-/**
- * Servicio para verificar permisos de administrador.
- */
 export const adminService = {
 
   /**
-   * Verifica si un usuario es administrador consultando Firestore.
-   * @param {string} uid - UID del usuario de Firebase Auth
-   * @returns {Promise<boolean>} true si es admin, false si no
+   * Verifica si un UID es administrador.
+   * @param {string} uid - Firebase UID
+   * @returns {Promise<boolean>}
    */
   async isAdmin(uid) {
     if (!uid) return false;
-    const docRef = doc(db, "admins", uid);
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists();
+    const { data } = await supabase
+      .from("admins")
+      .select("uid")
+      .eq("uid", uid)
+      .single();
+    return !!data;
   }
 };

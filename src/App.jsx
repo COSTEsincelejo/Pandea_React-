@@ -21,6 +21,7 @@ import Shop              from "./views/pages/Shop";
 import About             from "./views/pages/About";
 import ProductDetail     from "./views/pages/ProductDetail";
 import Admin             from "./views/pages/Admin";
+import MisCompras        from "./views/pages/MisCompras";
 
 /**
  * Componente principal de la aplicación.
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="/about"       element={<About />}         />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/admin"        element={<Admin />}         />
+              <Route path="/mis-compras"  element={<MisCompras />}    />
             </Routes>
           </MainLayout>
         </CartProvider>

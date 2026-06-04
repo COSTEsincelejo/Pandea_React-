@@ -1,48 +1,90 @@
 /**
- * @fileoverview Servicio de Productos
- * Obtiene los productos desde Firebase Firestore.
- * Los productos son creados por el administrador desde el panel /admin.
+ * @fileoverview Servicio de Productos — Supabase
+ * Maneja el CRUD de productos conectado a Supabase (PostgreSQL).
  */
 
-import { collection, getDocs, doc, getDoc, query, orderBy } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { supabase } from "../config/supabase";
 import { ProductModel } from "../models/Product";
-
-/** Referencia a la colección de productos en Firestore */
-const productsRef = collection(db, "products");
 
 export const productService = {
 
   /**
-   * Obtiene todos los productos de Firestore.
+   * Obtiene todos los productos activos ordenados por fecha.
    * @returns {Promise<ProductModel[]>}
    */
   async getAll() {
-    const q = query(productsRef, orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(d => new ProductModel({ id: d.id, ...d.data() }));
+    const { data, error } = await supabase
+      .from("productos")
+      .select(`*, categorias(nombre)`)
+      .eq("activo", true)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data.map(p => new ProductModel({
+      id:       p.id,
+      name:     p.nombre,
+      price:    p.precio,
+      img:      p.img,
+      category: p.categorias?.nombre || p.id_categoria,
+      brand:    p.brand,
+      sizes:    p.sizes,
+      colors:   p.colors,
+    }));
   },
 
   /**
    * Filtra productos por categoría.
-   * @param {string} category
+   * @param {string} category - "all" devuelve todos
    * @returns {Promise<ProductModel[]>}
    */
   async getByCategory(category) {
-    const all = await this.getAll();
-    if (category === "all") return all;
-    return all.filter(p => p.category === category);
+    if (category === "all") return this.getAll();
+
+    const { data, error } = await supabase
+      .from("productos")
+      .select(`*, categorias(nombre)`)
+      .eq("activo", true)
+      .eq("categorias.nombre", category)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data
+      .filter(p => p.categorias?.nombre === category)
+      .map(p => new ProductModel({
+        id:       p.id,
+        name:     p.nombre,
+        price:    Number(p.precio),
+        img:      p.img,
+        category: p.categorias?.nombre,
+        brand:    p.brand,
+        sizes:    p.sizes,
+        colors:   p.colors,
+      }));
   },
 
   /**
    * Busca productos por nombre.
-   * @param {string} query
+   * @param {string} query - Texto a buscar
    * @returns {Promise<ProductModel[]>}
    */
-  async search(queryText) {
-    const all = await this.getAll();
-    const q = queryText.toLowerCase();
-    return all.filter(p => p.name.toLowerCase().includes(q));
+  async search(query) {
+    const { data, error } = await supabase
+      .from("productos")
+      .select(`*, categorias(nombre)`)
+      .eq("activo", true)
+      .ilike("nombre", `%${query}%`);
+
+    if (error) throw error;
+    return data.map(p => new ProductModel({
+      id:       p.id,
+      name:     p.nombre,
+      price:    Number(p.precio),
+      img:      p.img,
+      category: p.categorias?.nombre,
+      brand:    p.brand,
+      sizes:    p.sizes,
+      colors:   p.colors,
+    }));
   },
 
   /**
@@ -51,9 +93,22 @@ export const productService = {
    * @returns {Promise<ProductModel|null>}
    */
   async getById(id) {
-    const docRef = doc(db, "products", id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) return null;
-    return new ProductModel({ id: docSnap.id, ...docSnap.data() });
+    const { data, error } = await supabase
+      .from("productos")
+      .select(`*, categorias(nombre)`)
+      .eq("id", id)
+      .single();
+
+    if (error) return null;
+    return new ProductModel({
+      id:       data.id,
+      name:     data.nombre,
+      price:    Number(data.precio),
+      img:      data.img,
+      category: data.categorias?.nombre,
+      brand:    data.brand,
+      sizes:    data.sizes,
+      colors:   data.colors,
+    });
   }
 };

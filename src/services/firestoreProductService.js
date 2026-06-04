@@ -1,81 +1,114 @@
 /**
- * @fileoverview Servicio de Productos con Firestore
- * Maneja el CRUD de productos en Firebase Firestore.
- * Solo el administrador puede crear, editar y eliminar productos.
- *
- * Colección en Firestore: "products"
- * Cada documento tiene: name, price, img, category, brand, sizes, colors, createdAt
+ * @fileoverview Servicio CRUD de Productos — Supabase
+ * Usado por el panel de administrador para crear, editar y eliminar productos.
  */
 
-import {
-  collection, addDoc, getDocs, doc,
-  updateDoc, deleteDoc, serverTimestamp, query, orderBy
-} from "firebase/firestore";
-import { db } from "../config/firebase";
-import { ProductModel } from "../models/Product";
+import { supabase } from "../config/supabase";
 
-/** Referencia a la colección de productos en Firestore */
-const productsRef = collection(db, "products");
-
-/**
- * Servicio CRUD de productos con Firestore.
- */
 export const firestoreProductService = {
 
   /**
-   * Obtiene todos los productos de Firestore ordenados por fecha de creación.
-   * @returns {Promise<ProductModel[]>} Lista de productos
+   * Obtiene todos los productos para el panel admin.
+   * @returns {Promise<Array>}
    */
   async getAll() {
-    const q = query(productsRef, orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => new ProductModel({
-      id: doc.id,
-      ...doc.data()
+    const { data, error } = await supabase
+      .from("productos")
+      .select(`*, categorias(nombre)`)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data.map(p => ({
+      id:       p.id,
+      name:     p.nombre,
+      price:    Number(p.precio),
+      img:      p.img,
+      category: p.categorias?.nombre || "",
+      brand:    p.brand || "Pandea",
+      sizes:    p.sizes || [],
+      colors:   p.colors || [],
+      stock:    p.stock || 0,
+      activo:   p.activo,
+      getFormattedPrice() {
+        return `$${Number(p.precio).toLocaleString()}`;
+      }
     }));
   },
 
   /**
-   * Crea un nuevo producto en Firestore.
-   * @param {Object} productData - Datos del producto
-   * @param {string} productData.name - Nombre del producto
-   * @param {number} productData.price - Precio en pesos
-   * @param {string} productData.img - URL de la imagen (Cloudinary)
-   * @param {string} productData.category - Categoría
-   * @param {string} productData.brand - Marca
-   * @param {string[]} productData.sizes - Tallas disponibles
-   * @param {string[]} productData.colors - Colores en hex
-   * @returns {Promise<string>} ID del documento creado
+   * Crea un nuevo producto en Supabase.
+   * @param {Object} productData
+   * @returns {Promise<string>} ID del producto creado
    */
   async create(productData) {
-    const docRef = await addDoc(productsRef, {
-      ...productData,
-      createdAt: serverTimestamp()
-    });
-    return docRef.id;
+    // Obtener ID de categoría
+    const { data: cat } = await supabase
+      .from("categorias")
+      .select("id")
+      .eq("nombre", productData.category)
+      .single();
+
+    const { data, error } = await supabase
+      .from("productos")
+      .insert({
+        nombre:       productData.name,
+        precio:       productData.price,
+        img:          productData.img,
+        id_categoria: cat?.id,
+        brand:        productData.brand,
+        sizes:        productData.sizes,
+        colors:       productData.colors,
+        stock:        productData.stock || 0,
+        descripcion:  productData.descripcion || "",
+        activo:       true,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data.id;
   },
 
   /**
-   * Actualiza un producto existente en Firestore.
-   * @param {string} id - ID del documento en Firestore
-   * @param {Object} productData - Datos a actualizar
-   * @returns {Promise<void>}
+   * Actualiza un producto existente.
+   * @param {string} id
+   * @param {Object} productData
    */
   async update(id, productData) {
-    const docRef = doc(db, "products", id);
-    await updateDoc(docRef, {
-      ...productData,
-      updatedAt: serverTimestamp()
-    });
+    const { data: cat } = await supabase
+      .from("categorias")
+      .select("id")
+      .eq("nombre", productData.category)
+      .single();
+
+    const { error } = await supabase
+      .from("productos")
+      .update({
+        nombre:       productData.name,
+        precio:       productData.price,
+        img:          productData.img,
+        id_categoria: cat?.id,
+        brand:        productData.brand,
+        sizes:        productData.sizes,
+        colors:       productData.colors,
+        stock:        productData.stock || 0,
+        descripcion:  productData.descripcion || "",
+      })
+      .eq("id", id);
+
+    if (error) throw error;
   },
 
   /**
-   * Elimina un producto de Firestore.
-   * @param {string} id - ID del documento a eliminar
-   * @returns {Promise<void>}
+   * Elimina (desactiva) un producto.
+   * @param {string} id
    */
   async delete(id) {
-    const docRef = doc(db, "products", id);
-    await deleteDoc(docRef);
+    const { error } = await supabase
+      .from("productos")
+      .update({ activo: false })
+      .eq("id", id);
+
+    if (error) throw error;
   }
 };
