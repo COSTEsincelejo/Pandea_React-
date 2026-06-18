@@ -1,23 +1,34 @@
 /**
  * @fileoverview Página de Tienda (Shop)
- * Muestra productos desde Firestore con filtros y búsqueda.
+ * Muestra productos desde Supabase con filtros y búsqueda.
+ * Soporta filtro inicial por URL: /shop?categoria=camisa
  */
 
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useProductController } from "../../controllers/useProductController";
 import { useCartController } from "../../controllers/useCartController";
 import ProductCard from "../components/ProductCard";
 
 const FILTERS = [
-  { label: "Todos",      value: "all"      },
-  { label: "Camisas",    value: "camisa"   },
-  { label: "Suéteres",   value: "sueter"   },
-  { label: "Pantalones", value: "pantalon" },
-  { label: "Blusas",     value: "blusa"    },
+  { label: "Todos",       value: "all"       },
+  { label: "Camisas",     value: "camisa"    },
+  { label: "Suéteres",    value: "sueter"    },
+  { label: "Pantalones",  value: "pantalon"  },
+  { label: "Blusas",      value: "blusa"     },
+  { label: "Accesorios",  value: "accesorio" },
 ];
 
 export default function Shop() {
   const { products, loading, category, setCategory, query, setQuery } = useProductController();
   const { handleAddToCart } = useCartController();
+  const [searchParams] = useSearchParams();
+
+  /** Si la URL trae ?categoria=X, lo aplica como filtro inicial */
+  useEffect(() => {
+    const cat = searchParams.get("categoria");
+    if (cat) setCategory(cat);
+  }, [searchParams]);
 
   return (
     <section id="shop-page" className="section-p1">
@@ -40,7 +51,6 @@ export default function Shop() {
         ))}
       </div>
 
-      {/* Loading */}
       {loading ? (
         <div style={{ textAlign: "center", padding: 60 }}>
           <p>Cargando productos...</p>

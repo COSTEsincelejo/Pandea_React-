@@ -4,7 +4,7 @@
  * Cuando el pago es aprobado, crea la venta en Supabase y limpia el carrito.
  */
 
-import { useState }        from "react";
+import { useState, useEffect } from "react";
 import { useNavigate }     from "react-router-dom";
 import { useCart }         from "../../context/CartContext";
 import { useAuth }         from "../../context/AuthContext";
@@ -19,6 +19,20 @@ export default function Checkout() {
   const [pagado,    setPagado]    = useState(false);
   const [error,     setError]     = useState(null);
   const [guardando, setGuardando] = useState(false);
+
+  // Guarda el pedido en sessionStorage apenas se carga el checkout.
+  // Así está disponible en PagoResultado.jsx sin importar cómo
+  // Wompi maneje la redirección (nueva pestaña, mismo tab, etc.)
+  useEffect(() => {
+    if (items && items.length > 0) {
+      sessionStorage.setItem("pandea_pending_order", JSON.stringify({
+        items,
+        totalPrice,
+        uid: user?.uid || null,
+      }));
+      console.log("💾 Pedido guardado en sessionStorage como respaldo");
+    }
+  }, [items, totalPrice, user]);
 
   // Carrito vacío
   if (!items || items.length === 0) {
@@ -47,6 +61,7 @@ export default function Checkout() {
         items,
       });
 
+      sessionStorage.removeItem("pandea_pending_order");
       clearCart();
       setPagado(true);
     } catch (err) {
