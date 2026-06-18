@@ -1,6 +1,7 @@
 /**
  * @fileoverview Servicio CRUD de Productos — Supabase
  * Usado por el panel de administrador para crear, editar y eliminar productos.
+ * El "eliminar" es un soft-delete: marca activo=false en lugar de borrar la fila.
  */
 
 import { supabase } from "../config/supabase";
@@ -8,13 +9,14 @@ import { supabase } from "../config/supabase";
 export const firestoreProductService = {
 
   /**
-   * Obtiene todos los productos para el panel admin.
+   * Obtiene todos los productos ACTIVOS para el panel admin.
    * @returns {Promise<Array>}
    */
   async getAll() {
     const { data, error } = await supabase
       .from("productos")
       .select(`*, categorias(nombre)`)
+      .eq("activo", true)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -41,7 +43,6 @@ export const firestoreProductService = {
    * @returns {Promise<string>} ID del producto creado
    */
   async create(productData) {
-    // Obtener ID de categoría
     const { data: cat } = await supabase
       .from("categorias")
       .select("id")
@@ -100,7 +101,7 @@ export const firestoreProductService = {
   },
 
   /**
-   * Elimina (desactiva) un producto.
+   * Elimina (desactiva) un producto — soft delete.
    * @param {string} id
    */
   async delete(id) {

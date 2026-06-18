@@ -3560,3 +3560,424 @@ footer {
   .checkout-grid  { grid-template-columns: 1fr; }
   .checkout-payment { position: static; }
 }
+
+/* ══ HERO — IMAGEN DE FONDO CON OVERLAY ════════════════════ */
+#hero {
+  position: relative;
+  display: block !important;
+  grid-template-columns: unset !important;
+  min-height: 560px;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+/* Degradado: oscuro a la izquierda → transparente a la derecha
+   así el texto siempre tiene contraste sin tapar toda la imagen */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(10,10,20,0.88) 0%,
+    rgba(10,10,20,0.72) 30%,
+    rgba(10,10,20,0.25) 55%,
+    rgba(10,10,20,0.05) 75%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  padding: 100px 60px;
+  color: #fff;
+}
+
+.hero-tag {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffb168;
+  background: rgba(255,255,255,0.1);
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.hero-content h1 {
+  color: #fff !important;
+  font-size: 52px !important;
+  line-height: 1.08 !important;
+  font-weight: 800 !important;
+  margin: 4px 0 !important;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.hero-highlight {
+  background: linear-gradient(90deg, #ffb168, #f36d38);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-content p {
+  color: rgba(255,255,255,0.85) !important;
+  font-size: 16px !important;
+  margin: 16px 0 28px !important;
+}
+
+.hero-content .btn-hero {
+  background: linear-gradient(90deg, #f36d38, #ff8a5b);
+  box-shadow: 0 8px 24px rgba(243,109,56,0.4);
+  font-size: 15px;
+  padding: 14px 32px;
+}
+
+.hero-content .btn-hero:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(243,109,56,0.5);
+}
+
+/* Responsive hero */
+@media (max-width: 768px) {
+  #hero { min-height: 460px; }
+
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(10,10,20,0.85) 0%,
+      rgba(10,10,20,0.55) 50%,
+      rgba(10,10,20,0.2) 100%
+    );
+  }
+
+  .hero-content {
+    padding: 60px 24px;
+    max-width: 100%;
+  }
+
+  .hero-content h1 { font-size: 34px !important; }
+  .hero-content p  { font-size: 14px !important; }
+}
+
+/* ══ HERO — AJUSTE DE OVERLAY A MORADO ═════════════════════ */
+.hero-overlay {
+  background: linear-gradient(
+    100deg,
+    rgba(30,20,60,0.90) 0%,
+    rgba(45,30,85,0.78) 30%,
+    rgba(60,45,110,0.35) 55%,
+    rgba(60,45,110,0.08) 75%
+  ) !important;
+}
+
+@media (max-width: 768px) {
+  .hero-overlay {
+    background: linear-gradient(
+      600deg,
+      rgba(30,20,60,0.88) 0%,
+      rgba(45,30,85,0.6) 50%,
+      rgba(60,45,110,0.2) 100%
+    ) !important;
+  }
+}
+
+/* Pequeño acento morado en el tag, conecta con el login */
+.hero-tag {
+  color: #c9b6ff !important;
+  background: rgba(139,92,246,0.18) !important;
+}
+
+/* ══ HERO — VERSIÓN SUAVE LAVANDA ═══════════════════════════ */
+.hero-overlay {
+  background: linear-gradient(
+    100deg,
+    rgba(90,80,140,0.55) 0%,
+    rgba(110,100,165,0.40) 30%,
+    rgba(140,135,190,0.18) 55%,
+    rgba(140,135,190,0.04) 75%
+  ) !important;
+}
+
+@media (max-width: 768px) {
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(90,80,140,0.55) 0%,
+      rgba(110,100,165,0.35) 50%,
+      rgba(140,135,190,0.1) 100%
+    ) !important;
+  }
+}
+
+/* Quitar brillo del botón */
+.hero-content .btn-hero {
+  background: #f36d38 !important;
+  box-shadow: none !important;
+}
+.hero-content .btn-hero:hover {
+  background: #e05a25 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* "On all products" sin gradiente brillante, color sólido suave */
+.hero-highlight {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+  color: #fff !important;
+}
+
+/* ══ NAVBAR — DROPDOWN CATEGORIAS ═══════════════════════════ */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown > a {
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-dropdown-arrow {
+  font-size: 9px;
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .nav-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(60,82,227,0.15);
+  padding: 10px;
+  min-width: 170px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Pequeña flecha apuntando hacia arriba */
+.nav-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 2px 0 0 0;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-dropdown-menu a {
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  color: #444 !important;
+  white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover {
+  background: #f0f2fd !important;
+  color: #3c52e3 !important;
+}
+
+/* En móvil el dropdown no aplica, se navega directo */
+@media (max-width: 768px) {
+  .nav-dropdown-menu { display: none !important; }
+  .nav-dropdown-arrow { display: none !important; }
+}
+
+/* ══ AJUSTES DE DISEÑO — FEEDBACK VISUAL ════════════════════ */
+
+/* 1. Overlay con más contraste */
+.hero-overlay {
+  background: linear-gradient(
+    100deg,
+    rgba(91,95,232,0.55) 0%,
+    rgba(108,99,255,0.42) 30%,
+    rgba(140,135,190,0.20) 55%,
+    rgba(140,135,190,0.05) 75%
+  ) !important;
+}
+
+@media (max-width: 768px) {
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(91,95,232,0.55) 0%,
+      rgba(108,99,255,0.38) 50%,
+      rgba(140,135,190,0.12) 100%
+    ) !important;
+  }
+}
+
+/* 3. Botón con el azul del login en vez de naranja */
+.hero-content .btn-hero {
+  background: #5b5fe8 !important;
+}
+.hero-content .btn-hero:hover {
+  background: #4a4ed4 !important;
+}
+
+/* 4. Logo con espaciado, menos "básico" */
+.logo h2 {
+  letter-spacing: 4px !important;
+  font-weight: 700 !important;
+  border-bottom: none !important;
+}
+
+#navbar li a.active::after,
+.logo h2 {
+  text-decoration: none !important;
+}
+
+/* Quitar el subrayado del logo si lo tenía heredado de <a> */
+.logo a, .logo a:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* 5. Más aire para la imagen, que no quede pegada al borde */
+.hero-bg img {
+  object-position: center 15% !important;
+}
+
+@media (min-width: 769px) {
+  .hero-content {
+    padding-right: 80px !important;
+  }
+}
+
+/* 6. Categorías más prominentes que el buscador */
+#navbar li a {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+.search-bar {
+  background: #f4f5fb !important;
+  border: 1.5px solid #e4e6f5 !important;
+}
+
+/* ══ CATEGORÍAS DESTACADAS ══════════════════════════════════ */
+#categorias-destacadas { text-align: center; padding: 48px 80px; }
+#categorias-destacadas h2 { margin-bottom: 6px; }
+#categorias-destacadas p  { color: #888; margin-bottom: 32px; }
+
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.categoria-card {
+  background: #f8f9ff;
+  border: 1.5px solid #eef0f9;
+  border-radius: 18px;
+  padding: 32px 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.categoria-card:hover {
+  background: #fff;
+  border-color: #5b5fe8;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(91,95,232,0.15);
+}
+
+.categoria-emoji { font-size: 40px; }
+
+.categoria-card h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #222;
+  font-weight: 600;
+}
+
+/* ══ BENEFICIOS DE CONFIANZA ════════════════════════════════ */
+#beneficios {
+  background: #f8f9ff;
+  padding: 40px 80px;
+}
+
+.beneficios-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.beneficio-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.beneficio-item i {
+  font-size: 28px;
+  color: #5b5fe8;
+  width: 44px;
+  text-align: center;
+}
+
+.beneficio-item h5 {
+  margin: 0 0 2px;
+  font-size: 14px;
+  color: #222;
+}
+
+.beneficio-item p {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #categorias-destacadas { padding: 32px 20px; }
+  .categorias-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .categoria-card { padding: 24px 14px; }
+
+  #beneficios { padding: 28px 20px; }
+  .beneficios-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+}

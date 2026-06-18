@@ -34,8 +34,19 @@ export default function Navbar() {
         <nav>
           <ul id="navbar" className={menuOpen ? "show" : ""}>
             <li><Link to="/"      className={isActive("/")      ? "active" : ""} onClick={() => setMenuOpen(false)}>Inicio</Link></li>
-            <li><Link to="/shop"  className={isActive("/shop")  ? "active" : ""} onClick={() => setMenuOpen(false)}>Productos</Link></li>
-            <li><Link to="/shop"  className=""                                   onClick={() => setMenuOpen(false)}>Categorias</Link></li>
+            
+            <li className="nav-dropdown">
+              <Link to="/shop" onClick={() => setMenuOpen(false)}>
+                Categorias <i className="fas fa-chevron-down nav-dropdown-arrow" />
+              </Link>
+              <div className="nav-dropdown-menu">
+                <Link to="/shop?categoria=camisa"   onClick={() => setMenuOpen(false)}>Camisas</Link>
+                <Link to="/shop?categoria=sueter"   onClick={() => setMenuOpen(false)}>Suéteres</Link>
+                <Link to="/shop?categoria=pantalon" onClick={() => setMenuOpen(false)}>Pantalones</Link>
+                <Link to="/shop?categoria=blusa"    onClick={() => setMenuOpen(false)}>Blusas</Link>
+                <Link to="/shop?categoria=accesorio" onClick={() => setMenuOpen(false)}>Accesorios</Link>
+              </div>
+            </li>
             <li><Link to="/about" className={isActive("/about") ? "active" : ""} onClick={() => setMenuOpen(false)}>Acerca De</Link></li>
           </ul>
         </nav>
